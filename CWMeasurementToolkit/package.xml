@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package Name="CW Measurement Toolkit" xmlns="http://opentap.io/schemas/package" Version="$(GitVersion)" OS="Windows,Linux">
+  <Description>
+    The CW Measurement Toolkit is a set of OpenTAP plugins that provide a framework for creating and executing CW
+    measurement
+    <Organisation>Keysight Technologies, Inc.</Organisation>
+  </Description>
+  <Files>
+    <File Path="Packages/CWMeasurementToolkit/CWMeasurementToolkit.dll" SourcePath="CWMeasurementToolkit.dll">
+      <SetAssemblyInfo Attributes="Version"/>
+    </File>
+  </Files>
+</Package>

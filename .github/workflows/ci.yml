@@ -1,0 +1,56 @@
+name: CI
+
+on: [push]
+
+env:
+  OPENTAP_VERSION: 9.27.1
+  #OPENTAP_COLOR: auto # github messes with the "auto" detection (i.e. it has no effect), and "always" breaks a lot of things
+  OPENTAP_ANSI_COLORS: true
+  OPENTAP_NO_UPDATE_CHECK: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_CONSOLE_ANSI_COLOR: true
+  NUGET_REPO_URL: "https://nuget.pkg.github.com/opentap/index.json"
+  NUGET_ORG_REPO_URL: "https://api.nuget.org/v3/index.json"
+  # https://github.blog/changelog/2024-03-07-github-actions-all-actions-will-run-on-node20-instead-of-node16-by-default/
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
+jobs:
+  ##############
+  ### TESTS  ###
+  ##############
+
+  UnitTests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test
+        run: dotnet test ./CWMeasurementToolkit.Tests/ -c Release
+
+  ##############
+  ### BUILDS ###
+  ##############
+
+  Build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/opentap/oci-images/build-dotnet:latest
+    timeout-minutes: 5
+    needs:
+      - UnitTests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fix tags
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: git fetch -f origin ${{ github.ref }}:${{ github.ref }} # Fixes an issue with actions/checkout@v4. See https://github.com/actions/checkout/issues/290
+      - name: Build
+        run: dotnet build -c Release
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          retention-days: 1
+          path: ./CWMeasurementToolkit/bin/Release/*.TapPackage

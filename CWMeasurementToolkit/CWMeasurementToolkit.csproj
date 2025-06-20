@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetFrameworkIdentifier></TargetFrameworkIdentifier>
+    <TargetFrameworkVersion></TargetFrameworkVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OpenTapPackageDefinitionPath>package.xml</OpenTapPackageDefinitionPath>
+    <CreateOpenTapPackage>false</CreateOpenTapPackage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <CreateOpenTapPackage>true</CreateOpenTapPackage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTAP" Version="9.28.2" />
+    <OpenTapPackageReference Include="Metrics and Assets" Version="0.2.4-beta.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(OS)' != 'WINDOWS_NT' AND '$(Configuration)' == 'Debug'">
+    <OpenTapPackageReference Include="TUI" version="1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(OS)' == 'WINDOWS_NT' AND '$(Configuration)' == 'Debug'">
+    <OpenTapPackageReference Include="Editor" version="9.28.2" />
+    <AdditionalOpenTapPackage Include="Metrics and Assets Panel" Version="1.1.1-rc.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TestSteps\SignalAnalyzerActions\" />
+    <Folder Include="TestSteps\TransceiverActions\" />
+  </ItemGroup>
+
+</Project>
