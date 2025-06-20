@@ -19,5 +19,8 @@ namespace CWMeasurementToolkit.Instruments.SignalAnalyzers
         }
 
         public abstract void Initialize();
+        public abstract void SetFrequency(double frequency);
+        public abstract void SetPower(double power);
+        public abstract void SetModulation(bool modulation);
     }
 }

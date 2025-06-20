@@ -10,5 +10,8 @@ namespace CWMeasurementToolkit.Instruments.SignalAnalyzers
     public interface ISignalAnalyzer
     {
         void Initialize();
+        void SetFrequency(double frequency);
+        void SetPower(double power);
+        void SetModulation(bool modulation);
     }
 }
