@@ -35,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TestSteps\SignalAnalyzerActions\" />
     <Folder Include="TestSteps\TransceiverActions\" />
   </ItemGroup>
 

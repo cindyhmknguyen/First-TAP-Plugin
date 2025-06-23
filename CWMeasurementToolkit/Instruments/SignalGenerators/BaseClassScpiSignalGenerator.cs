@@ -42,13 +42,15 @@ namespace CWMeasurementToolkit.Instruments.SignalGenerators
 
 
         public abstract void Initialize();
-        public abstract void SetAmplitudeCorrections(string amplitudeCorrectionsFilePath, int rfChannelNumber);
-        public abstract void SetFixtureCorrections(string fixtureCorrectionsFilePath, int rfChannelNumber);
-        public abstract void SetDutCorrections(string dutCorrectionsFilePath, int rfChannelNumber);
+        //public abstract void SetAmplitudeCorrections(string amplitudeCorrectionsFilePath, int rfChannelNumber);
+        //public abstract void SetFixtureCorrections(string fixtureCorrectionsFilePath, int rfChannelNumber);
+        //public abstract void SetDutCorrections(string dutCorrectionsFilePath, int rfChannelNumber);
+        public abstract void LoadARBMemory(string path, string name);
+        public abstract void SetARB(bool arb);
         public abstract void SetFrequency(double frequency);
         public abstract void SetPower(double power);
-        public abstract void SetSourcePort(string portName);
-        public abstract void ClearFlatness();
+        //public abstract void SetSourcePort(string portName);
+        //public abstract void ClearFlatness();
         public abstract void EnableSourceCw();
         public abstract void DisableSourceCw();
     }

@@ -18,12 +18,41 @@ namespace CWMeasurementToolkit.Instruments.SignalAnalyzers
             Log.Info("Successfully instantiated E6680AScpiSignalAnalyzer class.");
         }
 
+        protected override void UpdateAssetMetrics()
+        {
+            //UpdateAttenuatorBypassHistoryMetric();
+            UpdatePowerOnHistoryMetric();
+            //UpdateReversePowerProtectionHistoryMetric();
+            UpdateOnTimeHistoryMetric();
+
+        }
+
+        public override void UpdatePowerOnHistoryMetric()
+        {
+            Log.Info("Getting Power On History.");
+            string response = ScpiQuery(":DIAGnostic:CPU:INFormation:CCOunt:PON?").Trim(); //Gets the cumulative number of times the instrument has been powered on.
+            PowerOnHistoryMetric = int.Parse(response);
+            Log.Info("Power On History Metric successfully updated.");
+        }
+
+        public override void UpdateOnTimeHistoryMetric()
+        {
+            Log.Info("Getting On-Time History.");
+            string response = ScpiQuery(":DIAGnostic:CPU:INFormation:OTIMe?").Trim(); //Gets the cumulative number of hours the sig gen has been turned on.
+            OnTimeHistoryMetric = double.Parse(response);
+            Log.Info("On-Time History Metric successfully updated.");
+        }
+
         public override void Initialize()
         {
             Log.Info("Starting initialization of E6680A Signal Analyzer...");
+            
+            // CHP setup
+            ScpiCommand(":INST:CONF:NR5G:CHP");
+            
             ScpiCommand(":SYSTem:PRESet");
-            ScpiCommand(":OUTPut ON");
-            ScpiCommand(":OUTPut:MODulation:STATe OFF");
+            //ScpiCommand(":OUTPut ON");
+            //ScpiCommand(":OUTPut:MODulation:STATe OFF");
             ScpiQuery("*OPC?"); // Wait for all operations to complete
             Log.Info("Initialization of E6680A Signal Analyzer completed successfully.");
         }
@@ -48,16 +77,28 @@ namespace CWMeasurementToolkit.Instruments.SignalAnalyzers
         {
             if (modulation)
             {
-                Log.Info($"Setting output modulation to ON...");
+                Log.Info($"Turning ON the output modulation...");
                 ScpiCommand($":OUTPut:MODulation:STATe ON");
             } else
             {
-                Log.Info($"Setting output modulation to OFF...");
+                Log.Info($"Turning OFF the output modulation...");
                 ScpiCommand($":OUTPut:MODulation:STATe OFF");
             }
             ScpiQuery("*OPC?"); // Wait for all operations to complete
             Log.Info("Output modulation set successfully.");
         }
 
+        public override void MeasureCHP()
+        {
+            Log.Info($"Measuring channel power...");
+            ScpiCommand($":INITiate:CHPower");
+            ScpiCommand($":CONFigure:CHPower");
+            ScpiQuery($":SYST:ERR?");
+            ScpiQuery($":FETCh:CHPower1?");
+            ScpiQuery($":MEASure:CHPower1?");
+            ScpiQuery($":READ:CHP1?");
+            ScpiQuery("*OPC?"); // Wait for all operations to complete
+            Log.Info("Channel power measured successfully.");
+        }
     }
 }

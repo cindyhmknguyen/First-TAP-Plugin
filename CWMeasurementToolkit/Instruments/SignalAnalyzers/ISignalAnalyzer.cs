@@ -13,5 +13,6 @@ namespace CWMeasurementToolkit.Instruments.SignalAnalyzers
         void SetFrequency(double frequency);
         void SetPower(double power);
         void SetModulation(bool modulation);
+        void MeasureCHP();
     }
 }

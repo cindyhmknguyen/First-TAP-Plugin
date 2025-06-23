@@ -46,11 +46,15 @@ namespace CWMeasurementToolkit.Instruments.SignalGenerators
         public override void Initialize()
         {
             Log.Info("Starting initialization of E6680A Signal Generator...");
+
+            // CHP setup
+            ScpiCommand(":INST:CONF:NR5G:CHP");
+
             ScpiCommand(":SYSTem:PRESet");
-            ScpiCommand(":SOUR:RAD:ARB:TRIG KEY");
-            ScpiCommand("SOUR:RAD:ARB:STAT OFF");
-            ScpiCommand("OUTPut:MODulation:STATe OFF");
-            ScpiCommand(":SOURce:RF1:CORRection:BLOCk1:STATe ON"); // BlockA corrections are enabled by default on preset
+            //ScpiCommand(":SOUR:RAD:ARB:TRIG KEY");
+            //ScpiCommand(":SOUR:RAD:ARB:STAT OFF");
+            //ScpiCommand(":OUTPut:MODulation:STATe OFF");
+            //ScpiCommand(":SOURce:RF1:CORRection:BLOCk1:STATe ON"); // BlockA corrections are enabled by default on preset
             ScpiQuery("*OPC?"); // Wait for all operations to complete
             Log.Info("Initialization of E6680A Signal Generator completed successfully.");
         }
@@ -92,6 +96,31 @@ namespace CWMeasurementToolkit.Instruments.SignalGenerators
         //    Log.Info("DUT corrections applied successfully.");
         //}
 
+        public override void LoadARBMemory(string path, string name)
+        {
+            Log.Info($"Loading wfm file into ARB memory...");
+            ScpiCommand($":SOURce:RADio:ARB:LOAD \"{path}\"");
+            ScpiCommand($":SOURce:RADio:ARB:WAVeform \"{name}\"");
+            ScpiQuery("*OPC?"); // Wait for all operations to complete
+            Log.Info("wfm file successfully loaded into ARB memory.");
+        }
+
+        public override void SetARB(bool arb)
+        {
+            if (arb)
+            {
+                Log.Info($"Turning ON the ARB...");
+                ScpiCommand($":SOURce:RADio:ARB:STATe ON");
+            }
+            else
+            {
+                Log.Info($"Turning OFF the ARB...");
+                ScpiCommand($":SOURce:RADio:ARB:STATe OFF");
+            }
+            ScpiQuery("*OPC?"); // Wait for all operations to complete
+            Log.Info("ARB set successfully.");
+        }
+
         public override void SetFrequency(double frequencyMHz)
         {
             Log.Info($"Setting frequency to {frequencyMHz} MHz...");
@@ -125,7 +154,7 @@ namespace CWMeasurementToolkit.Instruments.SignalGenerators
         public override void EnableSourceCw()
         {
             Log.Info("Enabling CW output...");
-            ScpiCommand("OUTPut:STATe ON");
+            ScpiCommand(":OUTPut:STATe ON");
             ScpiQuery("*OPC?"); // Wait for all operations to complete
             Log.Info("CW output enabled.");
         }
@@ -133,7 +162,7 @@ namespace CWMeasurementToolkit.Instruments.SignalGenerators
         public override void DisableSourceCw()
         {
             Log.Info("Disabling CW output...");
-            ScpiCommand("OUTPut:STATe OFF");
+            ScpiCommand(":OUTPut:STATe OFF");
             ScpiQuery("*OPC?"); // Wait for all operations to complete
             Log.Info("CW output disabled.");
         }
